@@ -1,0 +1,12 @@
+separator: 'é'
+ports: []
+check: {type: 'Command', arguments: ['pg_isready']}
+limits: {}
+extra: {}
+servers: []
+level: 'INFO'
+started: 0001-01-01T00:00:00Z
+isEnabled: false
+ratio: -infinity
+replicas: 9223372036854775807
+name: 'db'

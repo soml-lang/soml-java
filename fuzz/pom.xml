@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Run `mvn install -DskipTests` in the parent directory first, so that this uses the current library. -->
+	<groupId>sh.soml</groupId>
+	<artifactId>soml-fuzz</artifactId>
+	<version>0.0.1</version>
+	<packaging>jar</packaging>
+
+	<properties>
+		<maven.compiler.release>25</maven.compiler.release>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- Jazzer depends on an older JUnit, so the BOM makes every JUnit artifact the same version. -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>5.14.4</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>sh.soml</groupId>
+			<artifactId>soml</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.code-intelligence</groupId>
+			<artifactId>jazzer-junit</artifactId>
+			<version>0.30.0</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Jazzer supports JUnit 5, and the library's own tests use JUnit 6, which is why the fuzz tests are a separate project. -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.16.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<useModulePath>false</useModulePath>
+					<!-- Jazzer attaches its agent to the running JVM. -->
+					<argLine>-XX:+EnableDynamicAgentLoading -Djdk.attach.allowAttachSelf=true -Djazzer.instrument=sh.soml.**</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,15 @@
+name: 'api'
+replicas: 3
+ratio: 0.75
+isEnabled: true
+started: 2026-09-19T14:00:00.000000001Z
+level: 'DEBUG'
+servers: [
+	{host: 'localhost', port: 8080, timeout: 1m30s, tags: ['prod', 'eu']}
+	{host: '::1', port: 443, tags: []}
+]
+extra: {nested: [null, 1, 0.5, 1ns, {}, []], text: "\u{0}"}
+limits: {DEBUG: 1, INFO: 2}
+check: {type: 'Http', url: 'https://example.com/health', status: 200}
+ports: [80, 443]
+separator: ':'

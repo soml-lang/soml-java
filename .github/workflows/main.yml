@@ -1,0 +1,46 @@
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  # The minimum Java version, and the newest.
+  test:
+    name: Java ${{ matrix.java }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [25, 27]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+      # Runs the tests and NullAway, and checks the Javadoc. `FloatVectorsTest` is skipped, because `soml-c` is not checked out.
+      - run: mvn --batch-mode install
+      # The saved fuzz inputs, as regression tests. Jazzer's bundled ASM does not support Java 27.
+      - if: matrix.java == 25
+        run: mvn --batch-mode --file fuzz/pom.xml test
+      # The benchmark is not part of the library, so nothing else builds it.
+      - run: mvn --batch-mode --file bench/pom.xml package
+  # A short run of each fuzz target, which finds what the tests do not try. A failing input fails the job, and Jazzer prints it.
+  fuzz:
+    name: Fuzz ${{ matrix.target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [parse, format, decode, edit]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+      - run: mvn --batch-mode install -DskipTests
+      - run: mvn --batch-mode --file fuzz/pom.xml test -Dtest='SomlFuzzTest#${{ matrix.target }}'
+        env:
+          JAZZER_FUZZ: 1
