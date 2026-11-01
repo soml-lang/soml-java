@@ -5,7 +5,7 @@
 	<!-- Run `mvn install -DskipTests` in the parent directory first, so that this uses the current library. -->
 	<groupId>sh.soml</groupId>
 	<artifactId>soml-bench</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<packaging>jar</packaging>
 
 	<properties>

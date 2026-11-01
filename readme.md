@@ -26,12 +26,12 @@
 <dependency>
 	<groupId>sh.soml</groupId>
 	<artifactId>soml</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 </dependency>
 ```
 
 ```kotlin
-implementation("sh.soml:soml:0.0.1")
+implementation("sh.soml:soml:0.0.2")
 ```
 
 ## Usage
